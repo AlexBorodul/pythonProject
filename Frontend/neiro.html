@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="neiro.css">
+    <title>Нейросеть для перевода наименований учреждений из именительного падежа в любой</title>
+  </head>
+  <body>
+    <section class="field">
+      <div id="messageContainer"></div>
+      <div class="input">
+        <input id="userMessage" type="text" placeholder="Введите сообщение" class="search">
+        <button onclick="sendMessage()" class="button">Отправить</button>
+      </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+  function sendMessage() {
+    var userMessage = document.getElementById('userMessage').value;
+
+    $.ajax({
+      url: '/api/inflect',
+      type: 'POST',
+      contentType: 'application/json;charset=UTF-8',
+      data: JSON.stringify({
+        court: userMessage,
+        case: 'именительный'  // You can adjust the case as needed
+      }),
+      success: function (response) {
+        var userAnswer = response.result;
+
+        var messageElement = document.createElement('div');
+        messageElement.className = 'message';
+
+        messageElement.innerHTML = '<p class="request">' + userMessage + '</p> <p class="answer">' + userAnswer + '</p>';
+
+        document.getElementById('messageContainer').appendChild(messageElement);
+
+        document.getElementById('userMessage').value = "";
+      },
+      error: function (error) {
+        console.log(error.responseText);
+      }
+    });
+  }
+</script>
+  </body>
+</html>
